@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-card">
+        <h2>Member Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const statusDiv = document.getElementById('status');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            statusDiv.innerText = "Processing...";
+            statusDiv.style.color = "#666";
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerText = "Success! " + data.message;
+                    statusDiv.style.color = "#2ea44f";
+                } else {
+                    statusDiv.innerText = "Error: " + data.message;
+                    statusDiv.style.color = "#d73a49";
+                }
+            } catch (error) {
+                statusDiv.innerText = "Server is offline. Check backend.";
+                statusDiv.style.color = "#d73a49";
+            }
+        });
+    </script>
+</body>
+</html>
